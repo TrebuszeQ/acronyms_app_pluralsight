@@ -50,14 +50,14 @@ def main():
         file.write(acronym + " - " + definition + "\n")
 
         file_content = file_to_string(file_name)
-        print("Line")
+        # print("Line")
 
     try:
         with open(file_name, operation_switcher[2], encoding=encoding) as file:
 
             if not has_acronym(file_content, acronym):
                 file.write(acronym + " - " + definition + "\n")
-                print("Line")
+                # print("Line")
                 return
             else:
                 print("Acronym already exists, do you want to refactor it?\n")
