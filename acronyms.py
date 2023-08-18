@@ -2,6 +2,7 @@
 def file_to_string(file_name, encoding):
     file = open_file_ext(file_name, 'r', encoding=encoding)
     file_content = file.read()
+    file.close()
     return file_content
 
 
@@ -19,14 +20,14 @@ def return_line(file_content, acronym):
 
 def open_file_ext(file_name, operation, encoding):
     try:
-        with open(file_name, operation, encoding=encoding) as file:
-            if operation == 'r':
-                print("File opened to read.")
-            elif operation == 'w':
-                print("File opened to write.")
-            elif operation == 'a':
-                print("File opened to append.")
-            return file
+        file = open(file_name, operation, encoding=encoding)
+        if operation == 'r':
+            print("File opened to read.")
+        elif operation == 'w':
+            print("File opened to write.")
+        elif operation == 'a':
+            print("File opened to append.")
+        return file
 
 
     except:
@@ -37,37 +38,43 @@ def main():
     encoding = "utf-8"
     file_name = "acronyms.txt"
     acronym = input("What acronym do you want to add?\n")
-    definition = input("What is the definition?\n")
+    definition = input("What is the definition?\n") + ';'
 
-    file_content = file_to_string(file_name)
+    file_content = file_to_string(file_name, encoding)
 
     operation_switcher = (
         'r', 'w', 'a'
     )
 
     if not has_acronym(file_content, acronym):
-        file = open_file_ext(file_name, 'w', encoding)
-        file.write(acronym + " - " + definition + "\n")
+        file = open_file_ext(file_name, 'a', encoding)
+        file.write(acronym + " - " + definition)
+        file.close()
+    else:
+        print("Acronym already exists, do you want to refactor it?\n")
+        refact_dec = input("y/n\n")
+        if refact_dec == 'y':
+            print()
+            # refactoring logic
+            pos = file_content.find(acronym) + len(acronym) + 3
+            pos_end = 0
+            definition_old = ''
 
-        file_content = file_to_string(file_name)
-        # print("Line")
-
-    try:
-        with open(file_name, operation_switcher[2], encoding=encoding) as file:
-
-            if not has_acronym(file_content, acronym):
-                file.write(acronym + " - " + definition + "\n")
-                # print("Line")
-                return
-            else:
-                print("Acronym already exists, do you want to refactor it?\n")
-                refact_dec = input("y/n\n")
-                if refact_dec == 'y':
-                    return_line(file_content, acronym)
-                return
-
-    except:
-        raise Exception("File could not be opened.")
+            while pos < len(file_content):
+                char = file_content[pos]
+                if char == ';':
+                    break
+                definition_old += char
+                pos += 1
+                pos_end = pos
+            print(definition_old, pos_end)
+            file_content = file_content.format(definition_old = definition)
+            file = open_file_ext(file_name, 'w', encoding)
+            file.write(file_content)
+            file.close()
+            print("File formated.")
+        else:
+            return
 
 
 main()
