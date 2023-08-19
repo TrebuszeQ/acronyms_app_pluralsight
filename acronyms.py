@@ -37,14 +37,10 @@ def open_file_ext(file_name, operation, encoding):
 def main():
     encoding = "utf-8"
     file_name = "acronyms.txt"
-    acronym = input("What acronym do you want to add?\n")
+    acronym = input("What acronym do you want to add?\n").upper()
     definition = input("What is the definition?\n") + ';'
 
     file_content = file_to_string(file_name, encoding)
-
-    operation_switcher = (
-        'r', 'w', 'a'
-    )
 
     if not has_acronym(file_content, acronym):
         file = open_file_ext(file_name, 'a', encoding)
@@ -57,18 +53,14 @@ def main():
             print()
             # refactoring logic
             pos = file_content.find(acronym) + len(acronym) + 3
-            pos_end = 0
             definition_old = ''
-
             while pos < len(file_content):
                 char = file_content[pos]
                 if char == ';':
                     break
                 definition_old += char
                 pos += 1
-                pos_end = pos
-            print(definition_old, pos_end)
-            file_content = file_content.format(definition_old = definition)
+            file_content = file_content.replace(definition_old, definition)
             file = open_file_ext(file_name, 'w', encoding)
             file.write(file_content)
             file.close()
